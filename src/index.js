@@ -1,17 +1,33 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+import axios from "axios";
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+const rootElement = document.getElementById("root");
+
+function Reddit() {
+    const [posts, setPosts] = React.useState([]);
+
+    React.useEffect(() => {
+          axios.get(`https://www.reddit.com/r/GradSchool.json`).then(res => {
+                  const newPosts = res.data.data.children.map(obj => obj.data);
+
+                  setPosts(newPosts);
+                });
+        }, []);
+
+    return (
+          <div>
+            <h1>/r/GradSchool</h1>
+            <ul>
+              {posts.map(post => (
+                          <li key={post.id}>
+                            <a href={post.url}>{post.title}</a>
+                          </li>
+                        ))}
+            </ul>
+          </div>
+        );
+}
+
+ReactDOM.render(<Reddit />, rootElement);
